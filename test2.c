@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <uv.h>
 #include <string.h>
-#include "lib/http-parser/http_parser.h"
+//#include "lib/http-parser/http_parser.h"
+#include "http-parser.h"
 
 uv_loop_t *loop;
 uv_tcp_t server;
@@ -26,15 +27,15 @@ void on_uv_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf);
 
 void on_uv_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf);
 
-int on_message_begin(struct http_parser* parser);
-
-int on_url(struct http_parser* parser, const char* at, size_t len);
-
-int on_header_field(struct http_parser* parser, const char* at, size_t len);
-
-int on_header_value(struct http_parser* parser, const char* at, size_t len);
-
-int on_body(struct http_parser* parser, const char* at, size_t len);
+//int on_message_begin(struct http_parser* parser);
+//
+//int on_url(struct http_parser* parser, const char* at, size_t len);
+//
+//int on_header_field(struct http_parser* parser, const char* at, size_t len);
+//
+//int on_header_value(struct http_parser* parser, const char* at, size_t len);
+//
+//int on_body(struct http_parser* parser, const char* at, size_t len);
 
 int main() {
     loop = uv_default_loop();
@@ -73,6 +74,11 @@ void on_uv_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
 }
 
 void on_uv_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
+
+    http_request req = http_parser(buf->base);
+
+
+    /*
     struct http_parser_settings parser_set;
     // 设置回调函数
     // 坑：「每个回调函数都需要设置」，即便为 NULL
@@ -92,6 +98,7 @@ void on_uv_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
     // 开始解析
     parsed_status = http_parser_execute(parser, &parser_set, buf->base, strlen(buf->base));
     free(parser);
+    */
 
     // 响应
     uv_buf_t res_buf;
@@ -102,26 +109,26 @@ void on_uv_read(uv_stream_t* client, ssize_t nread, const uv_buf_t* buf) {
 
 }
 
-int on_message_begin(struct http_parser* parser) {
-    return 0;
-}
-
-int on_url(struct http_parser* parser, const char* at, size_t len) {
-    printf("Url: %s\n", at);
-    return 0;
-}
-
-int on_header_field(struct http_parser* parser, const char* at, size_t len) {
-    printf("Header Field: %s\n", at);
-    return 0;
-}
-
-int on_header_value(struct http_parser* parser, const char* at, size_t len) {
-    printf("Header Value: %s\n", at);
-    return 0;
-}
-
-int on_body(struct http_parser* parser, const char* at, size_t len) {
-    printf("Body: %s\n", at);
-    return 0;
-}
+//int on_message_begin(struct http_parser* parser) {
+//    return 0;
+//}
+//
+//int on_url(struct http_parser* parser, const char* at, size_t len) {
+//    printf("Url: %s\nlen=%zu\n", at, len);
+//    return 0;
+//}
+//
+//int on_header_field(struct http_parser* parser, const char* at, size_t len) {
+//    printf("Header Field: %s\n", at);
+//    return 0;
+//}
+//
+//int on_header_value(struct http_parser* parser, const char* at, size_t len) {
+//    printf("Header Value: %s\n", at);
+//    return 0;
+//}
+//
+//int on_body(struct http_parser* parser, const char* at, size_t len) {
+//    printf("Body: %s\n", at);
+//    return 0;
+//}
